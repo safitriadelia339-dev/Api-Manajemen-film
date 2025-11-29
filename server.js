@@ -149,7 +149,7 @@ app.post('/directors', authenticateToken, (req, res) => {
     });
 });
 
-app.put('/directors/:id', authenticateToken, (req, res) => {
+app.put('/directors/:id', [authenticateToken, authorizeRole('admin')], (req, res) => {
     const { name, birth_year } = req.body;
     const { id } = req.params;
     const sql = "UPDATE directors SET name = ?, birth_year = ? WHERE id = ?";
@@ -159,7 +159,7 @@ app.put('/directors/:id', authenticateToken, (req, res) => {
     });
 });
 
-app.delete('/directors/:id', authenticateToken, (req, res) => {
+app.delete('/directors/:id', [authenticateToken, authorizeRole('admin')], (req, res) => {
     const { id } = req.params;
     const sql = "DELETE FROM directors WHERE id = ?";
     db.run(sql, id, function(err) {
