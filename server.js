@@ -71,8 +71,8 @@ app.post('/auth/register', (req, res) => {
             return res.status(500).json({ error: 'Gagal memproses pendaftaran' });
         }
 
-        const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        const params = [username.toLowerCase(), hashedPassword];
+        const sql = 'INSERT INTO users (username, password, role) VALUES (?, ?, ?)';
+        const params = [username.toLowerCase(), hashedPassword, 'user'];
         db.run(sql, params, function(err) {
             if (err) {
                 if (err.message.includes('UNIQUE constraint')) {
