@@ -103,7 +103,7 @@ app.post('/auth/login', (req, res) => {
                 return res.status(401).json({ error: 'Kredensial tidak valid' });
             }
 
-            const payload = { user: { id: user.id, username: user.username } };
+            const payload = { user: { id: user.id, username: user.username, role: user.role } };
 
             jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
                 if (err) {
@@ -112,6 +112,21 @@ app.post('/auth/login', (req, res) => {
                 }
                 return res.json({ message: 'Login berhasil', token });
             });
+        });
+    });
+});
+
+app.post('/auth/register-admin', (req, res) =>{
+    const {username, password} = req.body;
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+        if (err) return res.status(500).json({error: 'Gagal memproses pendaftaran'})
+        
+        const sql = 'INSERT INTO users (username, password, role) VALUES (?, ?, ?)';
+        const params = [username.toLowerCase(), hashedPassword, 'admin'];
+
+        db.run(sql, params, function(err){
+            if (err) return res.status(500).json({error: err.message});
+            res.status(201).json({message: 'Admin berhasil dibuat', userId: this.lastID});
         });
     });
 });
